@@ -1,0 +1,98 @@
+!
+hostname GNA_CN_0752947
+!
+username admin access-level 15
+username admin password 7 d033e22ae348aeb5660fc2140aec35850c4da997
+username guest access-level 0
+username guest password 7 35675e68f4b5af7b995d9205ad0fc43842f16450
+username oi31 access-level 15
+username oi31 password 7 f30e3e2ffcf3c00d261109e089055d8c4c632e87
+username DmViewNms access-level 15
+username DmViewNms password 7 a26060c0c9bcd1b8cd078b3947802d77ec78ccbf
+!
+clock timezone brasilia -3
+!
+banner login 
+~****************************
+* GNA CN 0752947
+*
+* Only authorized person has the right to access to this equipament.
+* Other are urged to log off IMMEDIATELY !!!
+* Somente pessoal autorizado pode acessar este equipamento.
+* Se ha razao para acessares este equipamento, identifique-se ABAIXO.
+***************************~
+!        
+storm-control action
+!        
+vlan qinq
+!        
+interface vlan 1
+ name DefaultVlan
+ ip address 192.168.0.25/24
+ set-member untagged ethernet all
+!        
+interface vlan 211
+ name VLAN_CLIENTE
+!        
+interface vlan 341
+ name VLAN_CLIENTE
+ set-member tagged ethernet 1/1
+ set-member tagged ethernet 1/5
+!        
+vlan-group 1
+vlan-group 1 vlan all
+!        
+interface ethernet 1/1
+ description UPLINK CGA
+ no negotiation
+ speed-duplex 1000full
+ no switchport storm-control broadcast
+ no switchport storm-control multicast
+ no switchport storm-control dlf
+!        
+interface ethernet 1/5
+ description GNA CN GNA-0752947
+ switchport qinq internal
+ no switchport storm-control broadcast
+ no switchport storm-control multicast
+ no switchport storm-control dlf
+ switchport vlan-translate egress
+ switchport vlan-translate ingress
+ no loopback-detection
+!        
+remote-devices enable ethernet range 1/1 1/4
+!        
+ip telnet server
+no ip http server
+ip http secure-server
+no ip ssh server
+!        
+ip snmp-server
+ip snmp-server community public ro
+ip snmp-server community Sw31D1t1RW rw
+!        
+logging history ram 7
+logging history flash 6
+!        
+qos queue cos-map 1 priority 1 4 
+qos queue cos-map 2 priority 6 
+!        
+qos queue sched-mode wrr queue-weights 1 2 sp sp
+!        
+spanning-tree 1
+spanning-tree 1 vlan-group 1
+!        
+vlan-translate ingress-table replace ethernet 1/5 source-vlan 211 new-vlan 341 
+!        
+vlan-translate egress-table ethernet 1/5 source-vlan 341 new-vlan 211 
+!        
+sync-source hierarchy 1 transmit-clock-source internal
+sync-source hierarchy 1 enable
+!        
+interface bundle range 1/2 1/8
+ tdm-channel 1
+!        
+GNA_CN_0752947#
+GNA_CN_0752947#
+GNA_CN_0752947#
+GNA_CN_0752947#

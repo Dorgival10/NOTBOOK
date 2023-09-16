@@ -1,0 +1,96 @@
+!
+hostname EDD_GNA0773264_CLIENTE
+!
+username admin access-level 15
+username admin password 7 d033e22ae348aeb5660fc2140aec35850c4da997
+username guest access-level 0
+username guest password 7 35675e68f4b5af7b995d9205ad0fc43842f16450
+banner login 
+~*******************************************************************************
+* EDD_GNA0773264_Cl (IP)_AGROQUIMA-101-CLIENTE
+* Only authorized person has the right to access to this equipament.
+* Other are urged to log off IMMEDIATELY !!!
+* Somente pessoal autorizado pode acessar este equipamento.
+* Se ha razao para acessares este equipamento, identifique-se ABAIXO.
+*******************************************************************************~
+!
+interface vlan 1
+ name DefaultVlan
+ ip address 192.168.0.25/24
+ set-member untagged ethernet all
+!
+interface vlan 31
+ name VLAN_E1
+ set-member tagged ethernet 1/1
+!
+interface vlan 100
+ name VLAN_COMUNICACAO
+ ip address 10.10.10.2/30
+ set-member tagged ethernet 1/1
+!
+interface vlan 2058
+ name GNA_0767350
+ set-member tagged ethernet 1/1
+ set-member tagged ethernet 1/5
+!
+vlan-group 1
+vlan-group 1 vlan all
+!
+interface ethernet 1/1
+ description CONEXAO EDD CLIENTE
+ no negotiation
+ speed-duplex 1000full
+ no switchport storm-control broadcast
+ no switchport storm-control multicast
+ no switchport storm-control dlf
+!
+interface ethernet 1/5
+ description CONEXWITCH METRO
+ no negotiation
+ speed-duplex 100full
+ no switchport storm-control broadcast
+ no switchport storm-control multicast
+ no switchport storm-control dlf
+!
+remote-devices enable ethernet range 1/1 1/4
+!
+ip telnet server
+ip http server
+no ip http secure-server
+no ip ssh server
+!
+ip snmp-server
+ip snmp-server community public ro
+!
+spanning-tree 1
+spanning-tree 1 vlan-group 1
+!
+sync-source hierarchy 1 transmit-clock-source adaptive bundle 1
+sync-source hierarchy 2 transmit-clock-source adaptive bundle 2
+sync-source hierarchy 3 transmit-clock-source adaptive bundle 3
+sync-source hierarchy 4 transmit-clock-source adaptive bundle 4
+sync-source hierarchy 5 transmit-clock-source adaptive bundle 5
+sync-source hierarchy 6 transmit-clock-source adaptive bundle 6
+sync-source hierarchy all enable
+!
+interface tdm range 1/1 1/2
+ no shutdown
+!        
+interface bundle 1/1
+ destination-ip-address 192.168.100.1
+ jitter-buffer 20.000
+ ip-next-hop 192.168.100.1
+ packet-delay 2.000
+ source-ip-address 192.168.100.2
+ vlan 31 priority 7
+ no shutdown
+!
+interface bundle 1/2
+ destination-bundle 2
+ destination-ip-address 192.168.100.3
+ jitter-buffer 20.000
+ ip-next-hop 192.168.100.3
+ packet-delay 2.000
+ source-ip-address 192.168.100.4
+ vlan 31 priority 7
+ no shutdown
